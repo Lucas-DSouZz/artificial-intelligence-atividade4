@@ -3,7 +3,8 @@
 #include <assert.h>
 #include "particles.h"
 #include "utils.h"
-//adicional
+
+//  Adicional
 #define VMAX 32
 
 void initParticle(particle* p, int dim, double* x_0){
@@ -13,24 +14,23 @@ void initParticle(particle* p, int dim, double* x_0){
     dim: dimensão do espaço de busca
     x_0: posição inicial
 */
-    //Posição inicial
+    //  Posição inicial
     p->x = malloc(dim*sizeof(double));
     assert(p->x);
     copyArray(p->x,x_0,dim);
-    //Posição ótima
+    //  Posição ótima
     p->x_opt = malloc(dim*sizeof(double));
     assert(p->x_opt);
     copyArray(p->x_opt,x_0,dim);
-    //Velocidade inicial é zero
+    //  Velocidade inicial é zero
     p->v = malloc(dim*sizeof(double));
     assert(p->v);
     for (int i=0; i<dim; i++)
         p->v[i] = 0;
-    //Dimensão
+    //  Dimensão
     p->dim = dim;
 
-    //adicional
-
+    //  Adicional
     p->vmax = VMAX;
 }
 
@@ -52,42 +52,39 @@ void updateVelocity(particle* p, double* c1, double* c2, double* swarm_opt){
     c1 e c2: vetores de coeficientes
     swarm_opt: vetor ótimo do enxame
 */
-    //Termo individual da velocidade
+    //  Termo individual da velocidade
     double* aux_sub1 = arraySub(p->x_opt,p->x,p->dim);
     double* aux_mul1 = arrayMul(c1,aux_sub1,p->dim);
-    //Termo coletivo da velocidade
+
+    //  Termo coletivo da velocidade
     double* aux_sub2 = arraySub(swarm_opt,p->x,p->dim);
     double* aux_mul2 = arrayMul(c2,aux_sub2,p->dim);
-    //Ponteiro para velocidade anterior
-    double* aux_v = p->v;
-    //Atualiza velocidade
+
+    //  Atualiza velocidade
     double* aux_sum = arraySum(aux_mul1,aux_mul2,p->dim);
-    p->v = arraySum(aux_v,aux_sum,p->dim);
 
-    //inicio mudança
+    double* old_v = p->v;
+    double* new_v = arraySum(old_v, aux_sum, p->dim);
+    
+    p->v = new_v;
 
-    //aux_v é usado para pegar o valor atual atualizado da velocidade
-    aux_v = p->v;
-    // nomra é a norma da velocidade da partícula
-    int norma = norm(aux_v, p->dim);
-    double* aux_div;
-    if(norma > VMAX){// se a norma da velocidade for maior que vmax:
-        aux_div = arrayDiv(aux_v, (norma * VMAX), p->dim);
-        p->v = aux_div;
+    //  Inicio mudança
+    //  Norma é a norma da velocidade da partícula
+    int norma = norm(p->v, p->dim);
+    if (norma > VMAX) {
+        double* limited = arrayDiv(p->v, (norma * VMAX), p->dim);
+        free(p->v);
+        p->v = limited;
     }
+    //  Fim mudança
 
-
-    //fim mudança
-
-    //Libera memória
+    //  Libera memória
+    free(old_v);
     free(aux_sub1);
     free(aux_sub2);
     free(aux_mul1);
     free(aux_mul2);
-    free(aux_v);
     free(aux_sum);
-    //adicional
-    free(aux_div);
 }
 
 void updatePosition(particle* p, double (*cost)(double*)){
@@ -96,16 +93,16 @@ void updatePosition(particle* p, double (*cost)(double*)){
     p: partícula a ser atualizada
     cost: função custo
 */
-    //Ponteiro para posição anterior
+    //  Ponteiro para posição anterior
     double* aux_x = p->x;
-    //Atualiza posição atual
+    //  Atualiza posição atual
     p->x = arraySum(aux_x,p->v,p->dim);
-    //Checa se x_opt deve ser atualizada
+    //  Checa se x_opt deve ser atualizada
     double cost_prev = cost(p->x_opt);
     double cost_new = cost(p->x);
     if (cost_prev>cost_new){
         copyArray(p->x_opt,p->x,p->dim);
     }
-    //Libera memória
+    //  Libera memória
     free(aux_x);
 }

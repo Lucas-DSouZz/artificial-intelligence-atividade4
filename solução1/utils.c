@@ -42,7 +42,7 @@ double norm(double* v, int len){
     return sqrt(out);    
 }
 
-//adicional
+//  Adicional
 double* arrayDiv(double* u, int div, int len){
     double *out = malloc(len*sizeof(double));
     assert(out);

@@ -22,16 +22,16 @@ void initSwarm(swarm* S, int N, int dim, double* c1, double* c2){
         }
         initParticle(&S->P[i],dim,aux_x);
     }
-    //Posição ótima inicial é também aleatória
+    //  Posição ótima inicial é também aleatória
     S->x_opt = malloc(dim*sizeof(double));
     assert(S->x_opt);
     for (int s=0; s<dim; s++){
         S->x_opt[s] = ((double)rand())/((double)(RAND_MAX));
         S->x_opt[s] = 2*S->x_opt[s]-1;
     }
-    //Dimensão
+    //  Dimensão
     S->dim = dim;
-    //Vetores coeficientes
+    //  Vetores coeficientes
     S->c1 = c1;
     S->c2 = c2;
     S->N = N;
@@ -43,16 +43,17 @@ void freeSwarm(swarm* S){
             freeParticle(&S->P[i]);
         }
         free(S->P);
+        free(S->x_opt);
     }
 }
 
 void updateSwarm(swarm* S, double (*cost)(double*)){
-    //Valor ótimo atual
+    //  Valor ótimo atual
     double f_opt = cost(S->x_opt);
-    //Índice inicial da melhor partícula é -1
+    //  Índice inicial da melhor partícula é -1
     int id_opt = -1;
 
-    //Atualiza posições das partículas e busca novo valor ótimo
+    //  Atualiza posições das partículas e busca novo valor ótimo
     for (int i=0; i<S->N; i++){
         updateVelocity(&S->P[i],S->c1,S->c2,S->x_opt);
         updatePosition(&S->P[i],cost);
@@ -63,7 +64,7 @@ void updateSwarm(swarm* S, double (*cost)(double*)){
         }
     }
 
-    //Se melhorou ótimo atual, atualiza
+    //  Se melhorou ótimo atual, atualiza
     if (id_opt>-1){
         copyArray(S->x_opt,S->P[id_opt].x_opt,S->dim);
     }

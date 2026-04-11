@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 
 plt.rcParams.update({'font.size': 16})
 
+plt.figure()
+
 data = np.loadtxt("resultados_N=5.dat")
 plt.plot(data,label="N=5")
 data = np.loadtxt("resultados_N=10.dat")
@@ -18,7 +20,9 @@ plt.yscale("log")
 plt.xlabel("Número de iterações")
 plt.ylabel("Função objetivo")
 plt.suptitle("Prioridade para o ótimo individual")
-plt.show()
+plt.savefig("grafico_individual.png")
+
+plt.figure()
 
 data = np.loadtxt("resultadosb_N=5.dat")
 plt.plot(data,label="N=5")
@@ -35,4 +39,4 @@ plt.yscale("log")
 plt.xlabel("Número de iterações")
 plt.ylabel("Função objetivo")
 plt.suptitle("Prioridade para o ótimo do enxame")
-plt.show()
+plt.savefig("grafico_enxame.png")

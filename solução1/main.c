@@ -23,15 +23,15 @@ void writeArray(char* fname, double* out, int n){
 
 int main(){
 
-    //Ótimo individual é priorizado no cálculo da velocidade
+    //  Ótimo individual é priorizado no cálculo da velocidade
     double c1[2] = {0.05,0.05};
     double c2[2] = {0.01,0.01};
-/*
-    //Ótimo do enxame é priorizado no cálculo da velocidade
-    double c1[2] = {0.01,0.01};
-    double c2[2] = {0.05,0.05};
-*/
-    swarm S; initSwarm(&S,5,2,c1,c2);
+
+    //  Ótimo do enxame é priorizado no cálculo da velocidade
+    //double c1[2] = {0.01,0.01};
+    //double c2[2] = {0.05,0.05};
+
+    swarm S; initSwarm(&S,10,2,c1,c2);
 
     int tmax = 1000;
     double out[tmax];
@@ -40,6 +40,6 @@ int main(){
         out[t] = rastrigin(S.x_opt);
     }
 
-    writeArray("resultados_N=5.dat",out,tmax);
+    writeArray("resultados_N=10.dat",out,tmax);
     return 0;
 }
